@@ -1,11 +1,11 @@
 name: QA CI - Run Selenium tests
 
 on:
-   push:
-    branches:
-      - main
-  # repository_dispatch:
-  #   types: [run-qa-tests]
+  #  push:
+  #   branches:
+  #     - main
+  repository_dispatch:
+    types: [run-qa-tests]
 
 jobs:
   run-tests:
