@@ -39,4 +39,4 @@ jobs:
           APP_PASSWORD: ${{ github.event.client_payload.password }}
         working-directory: .
         run: |
-          mvn -B -f QA-automation/pom.xml test
+          mvn -B -f pom.xml test
