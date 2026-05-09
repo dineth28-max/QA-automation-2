@@ -37,6 +37,6 @@ jobs:
           APP_BASE_URL: ${{ github.event.client_payload.app_url }}
           APP_USERNAME: ${{ github.event.client_payload.username }}
           APP_PASSWORD: ${{ github.event.client_payload.password }}
-        working-directory: .
+        working-directory: ${{ github.workspace }}
         run: |
-          mvn -B -f pom.xml test
+          mvn -B test
