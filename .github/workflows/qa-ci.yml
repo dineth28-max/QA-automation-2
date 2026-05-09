@@ -1,0 +1,42 @@
+name: QA CI - Run Selenium tests
+
+on:
+  repository_dispatch:
+    types: [run-qa-tests]
+
+jobs:
+  run-tests:
+    name: Run Selenium tests from dispatch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Show dispatch payload
+        run: |
+          echo "Event payload: $GITHUB_EVENT_PATH"
+          cat $GITHUB_EVENT_PATH
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Check Chrome version
+        run: |
+          google-chrome --version || chromium --version || true
+
+      - name: Run Maven tests
+        env:
+          APP_BASE_URL: ${{ github.event.client_payload.app_url }}
+          APP_USERNAME: ${{ github.event.client_payload.username }}
+          APP_PASSWORD: ${{ github.event.client_payload.password }}
+        working-directory: .
+        run: |
+          mvn -B -f QA-automation/pom.xml test
