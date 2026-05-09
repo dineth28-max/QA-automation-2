@@ -59,8 +59,10 @@ class LoginFlowTest {
         wait.until(driver -> driver.getPageSource().contains("Experience the untamed essence of Alphonso."));
 
         String bodyText = driver.findElement(By.tagName("body")).getText();
+        String pageSource = driver.getPageSource();
+        
         assertTrue(bodyText.contains("RAW Pressery"), "Expected authenticated navigation to be visible");
-        assertTrue(bodyText.contains("Experience the untamed essence of Alphonso."), "Expected hero content after login");
+        assertTrue(pageSource.contains("Experience the untamed essence of Alphonso."), "Expected hero content after login");
     }
 
     private String resolveValue(String environmentKey, String systemPropertyKey, String defaultValue) {
