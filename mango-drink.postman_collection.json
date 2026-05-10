@@ -37,7 +37,10 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/"
+          "raw": "{{baseUrl}}/",
+          "protocol": "http",
+          "host": ["{{baseUrl}}" ],
+          "path": [""]
         }
       },
       "event": [
@@ -73,7 +76,10 @@
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/vite.svg"
+          "raw": "{{baseUrl}}/vite.svg",
+          "protocol": "http",
+          "host": ["{{baseUrl}}"],
+          "path": ["vite.svg"]
         }
       },
       "event": [

@@ -23,7 +23,7 @@ jobs:
 
       - name: Run Postman collection
         env:
-          API_BASE_URL: ${{ github.event.client_payload.app_url }}
+          API_BASE_URL: ${{ github.event.client_payload.app_url || 'http://192.99.71.97:8081' }}
           POSTMAN_AUTH_KEY: ${{ github.event.client_payload.authKey || secrets.POSTMAN_AUTH_KEY }}
         run: |
           npx -y newman@5 run mango-drink.postman_collection.json \
