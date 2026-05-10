@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -21,7 +22,9 @@ class LoginFlowTest {
     @BeforeEach
     void setUp() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless=new");
+        if (resolveBoolean("APP_HEADLESS", "app.headless", true)) {
+            options.addArguments("--headless=new");
+        }
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--ignore-certificate-errors");
@@ -41,9 +44,12 @@ class LoginFlowTest {
 
     @Test
     void userCanLogInAndSeeTheLandingPage() {
-        String baseUrl = resolveValue("APP_BASE_URL", "app.baseUrl");
-        String username = resolveValue("APP_USERNAME", "app.username", "dineth");
-        String password = resolveValue("APP_PASSWORD", "app.password", "dineth@123");
+        // String baseUrl = resolveValue("APP_BASE_URL", "app.baseUrl");
+        // String username = resolveValue("APP_USERNAME", "app.username", "dineth");
+        // String password = resolveValue("APP_PASSWORD", "app.password", "dineth@123");
+        String baseUrl = "http://192.99.71.97:8081";
+        String username = "dineth";
+        String password = "dineth@123";
 
         if (baseUrl.isBlank()) {
             fail("APP_BASE_URL or -Dapp.baseUrl must be set");
@@ -57,6 +63,8 @@ class LoginFlowTest {
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("nav")));
         wait.until(driver -> driver.getPageSource().contains("Experience the untamed essence of Alphonso."));
+
+        scrollDownSlowly();
 
         String bodyText = driver.findElement(By.tagName("body")).getText();
         String pageSource = driver.getPageSource();
@@ -81,5 +89,32 @@ class LoginFlowTest {
 
     private String resolveValue(String environmentKey, String systemPropertyKey) {
         return resolveValue(environmentKey, systemPropertyKey, "");
+    }
+
+    private boolean resolveBoolean(String environmentKey, String systemPropertyKey, boolean defaultValue) {
+        String systemValue = System.getProperty(systemPropertyKey);
+        if (systemValue != null && !systemValue.isBlank()) {
+            return Boolean.parseBoolean(systemValue);
+        }
+
+        String environmentValue = System.getenv(environmentKey);
+        if (environmentValue != null && !environmentValue.isBlank()) {
+            return Boolean.parseBoolean(environmentValue);
+        }
+
+        return defaultValue;
+    }
+
+    private void scrollDownSlowly() {
+        JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+        for (int offset = 0; offset <= 1800; offset += 180) {
+            javascriptExecutor.executeScript("window.scrollTo(0, arguments[0]);", offset);
+            try {
+                Thread.sleep(120);
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
     }
 }
