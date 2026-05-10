@@ -1,4 +1,13 @@
 -------------------------------------------------------------------------------
 Test set: com.mango.automation.LoginFlowTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.426 s -- in com.mango.automation.LoginFlowTest
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 12.13 s <<< FAILURE! -- in com.mango.automation.LoginFlowTest
+com.mango.automation.LoginFlowTest.userCanLogInAndSeeTheLandingPage -- Time elapsed: 12.09 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: APP_BASE_URL or -Dapp.baseUrl must be set
+	at org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:38)
+	at org.junit.jupiter.api.Assertions.fail(Assertions.java:138)
+	at com.mango.automation.LoginFlowTest.userCanLogInAndSeeTheLandingPage(LoginFlowTest.java:55)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+

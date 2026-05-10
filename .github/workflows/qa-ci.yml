@@ -30,10 +30,36 @@ jobs:
             --env-var baseUrl="$API_BASE_URL" \
             --env-var authKey="$POSTMAN_AUTH_KEY" \
             --reporters cli
+    
+  unit-tests:
+    name: Run unit tests from dispatch
+    needs: api-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python requirements
+        working-directory: ${{ github.workspace }}
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install pytest requests; fi
+
+      - name: Run pytest
+        env:
+          APP_BASE_URL: ${{ github.event.client_payload.app_url || 'http://192.99.71.97:8081' }}
+        working-directory: ${{ github.workspace }}
+        run: |
+          pytest -q
 
   run-tests:
     name: Run Selenium tests from dispatch
-    needs: api-tests
+    needs: unit-tests
     runs-on: ubuntu-latest
 
     steps:
