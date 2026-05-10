@@ -36,12 +36,7 @@
             "value": "text/html"
           }
         ],
-        "url": {
-          "raw": "{{baseUrl}}/",
-          "protocol": "http",
-          "host": ["{{baseUrl}}" ],
-          "path": [""]
-        }
+        "url": "{{baseUrl}}/"
       },
       "event": [
         {
@@ -75,12 +70,7 @@
             "value": "image/svg+xml"
           }
         ],
-        "url": {
-          "raw": "{{baseUrl}}/vite.svg",
-          "protocol": "http",
-          "host": ["{{baseUrl}}"],
-          "path": ["vite.svg"]
-        }
+        "url": "{{baseUrl}}/vite.svg"
       },
       "event": [
         {
