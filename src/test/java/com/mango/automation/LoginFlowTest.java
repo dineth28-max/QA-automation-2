@@ -44,12 +44,12 @@ class LoginFlowTest {
 
     @Test
     void userCanLogInAndSeeTheLandingPage() {
-        // String baseUrl = resolveValue("APP_BASE_URL", "app.baseUrl");
-        // String username = resolveValue("APP_USERNAME", "app.username", "dineth");
-        // String password = resolveValue("APP_PASSWORD", "app.password", "dineth@123");
-        String baseUrl = "http://192.99.71.97:8081";
-        String username = "dineth";
-        String password = "dineth@123";
+        String baseUrl = resolveValue("APP_BASE_URL", "app.baseUrl");
+        String username = resolveValue("APP_USERNAME", "app.username", "dineth");
+        String password = resolveValue("APP_PASSWORD", "app.password", "dineth@123");
+        // String baseUrl = "http://192.99.71.97:8081";
+        // String username = "dineth";
+        // String password = "dineth@123";
 
         if (baseUrl.isBlank()) {
             fail("APP_BASE_URL or -Dapp.baseUrl must be set");
