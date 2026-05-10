@@ -8,6 +8,30 @@ on:
     types: [run-qa-tests]
 
 jobs:
+  api-tests:
+    name: Run API tests from dispatch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Postman collection
+        working-directory: ${{ github.workspace }}/QA-automation
+        env:
+          API_BASE_URL: ${{ github.event.client_payload.app_url }}
+          POSTMAN_AUTH_KEY: ${{ github.event.client_payload.authKey || secrets.POSTMAN_AUTH_KEY }}
+        run: |
+          npx -y newman@5 run mango-drink.postman_collection.json \
+            --env-var baseUrl="$API_BASE_URL" \
+            --env-var authKey="$POSTMAN_AUTH_KEY" \
+            --reporters cli
+
   run-tests:
     name: Run Selenium tests from dispatch
     runs-on: ubuntu-latest

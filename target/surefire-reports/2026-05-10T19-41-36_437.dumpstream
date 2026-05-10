@@ -1,0 +1,5 @@
+# Created at 2026-05-10T19:41:36.667
+Boot Manifest-JAR contains absolute paths in classpath 'D:\Anterfoundry\QA Automation\QA-automation\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+

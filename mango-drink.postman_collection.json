@@ -1,0 +1,102 @@
+{
+  "info": {
+    "_postman_id": "7d1a5c6f-6bc0-4e9f-8e4d-0b5f6c9d6f01",
+    "name": "Mango Drink QA API Checks",
+    "description": "Collection for verifying the deployed Mango Drink app shell and static assets. The app currently exposes a static server, so these checks validate the live deployment surface and accept a bearer token placeholder for future API routes.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://192.99.71.97:8081"
+    },
+    {
+      "key": "authKey",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check - App Shell",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/html"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('serves HTML', function () {",
+              "  pm.expect(pm.response.headers.get('Content-Type') || pm.response.headers.get('content-type')).to.include('text/html');",
+              "});",
+              "",
+              "pm.test('includes the RAW Pressery title', function () {",
+              "  pm.expect(pm.response.text()).to.include('RAW Pressery | Pure Cold-Pressed Juice');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Static Asset - Vite Logo",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "image/svg+xml"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/vite.svg"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('serves SVG content', function () {",
+              "  pm.expect(pm.response.headers.get('Content-Type') || pm.response.headers.get('content-type')).to.include('image/svg+xml');",
+              "});",
+              "",
+              "pm.test('contains an SVG payload', function () {",
+              "  pm.expect(pm.response.text()).to.include('<svg');",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
