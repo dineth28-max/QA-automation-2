@@ -22,12 +22,12 @@ jobs:
           node-version: '20'
 
       - name: Run Postman collection
-        working-directory: ${{ github.workspace }}/QA-automation
+        working-directory: ${{ github.workspace }}
         env:
           API_BASE_URL: ${{ github.event.client_payload.app_url }}
           POSTMAN_AUTH_KEY: ${{ github.event.client_payload.authKey || secrets.POSTMAN_AUTH_KEY }}
         run: |
-          npx -y newman@5 run mango-drink.postman_collection.json \
+          npx -y newman@5 run ./QA-automation/mango-drink.postman_collection.json \
             --env-var baseUrl="$API_BASE_URL" \
             --env-var authKey="$POSTMAN_AUTH_KEY" \
             --reporters cli
