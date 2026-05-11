@@ -26,10 +26,18 @@ jobs:
           API_BASE_URL: ${{ github.event.client_payload.app_url || 'http://192.99.71.97:8081' }}
           POSTMAN_AUTH_KEY: ${{ github.event.client_payload.authKey || secrets.POSTMAN_AUTH_KEY }}
         run: |
+          mkdir -p reports
           npx -y newman@5 run mango-drink.postman_collection.json \
             --env-var baseUrl="$API_BASE_URL" \
             --env-var authKey="$POSTMAN_AUTH_KEY" \
-            --reporters cli
+            --reporters cli,junit --reporter-junit-export reports/api_results.xml || true
+          python scripts/write_env.py
+
+      - name: Upload API test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-report
+          path: reports/
     
   unit-tests:
     name: Run unit tests from dispatch
@@ -55,7 +63,14 @@ jobs:
           APP_BASE_URL: ${{ github.event.client_payload.app_url || 'http://192.99.71.97:8081' }}
         working-directory: ${{ github.workspace }}
         run: |
-          pytest -q
+          pytest -q --junitxml=pytest-results.xml
+
+      - name: Upload unit test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-report
+          path: |
+            pytest-results.xml
 
   run-tests:
     name: Run Selenium tests from dispatch
@@ -92,4 +107,79 @@ jobs:
           APP_PASSWORD: ${{ github.event.client_payload.password }}
         working-directory: ${{ github.workspace }}
         run: |
-          mvn -B test
+          START_TIME=$(date +%s)
+          mvn -B test || true
+          END_TIME=$(date +%s)
+          mkdir -p reports
+          CHROME_VER=$(google-chrome --version 2>/dev/null || chromium --version 2>/dev/null || true)
+          OS_INFO=$(uname -a)
+          DURATION=$((END_TIME-START_TIME))
+          export CHROME_VER OS_INFO START_TIME END_TIME DURATION
+          python scripts/update_env.py
+      - name: Upload UI test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-report
+          path: |
+            target/surefire-reports/
+            reports/
+
+  Aggregate-Results-and-Generate-Report:
+    name: Aggregate test results and generate report
+    needs: run-tests
+    runs-on: ubuntu-latest 
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies for WeasyPrint
+        if: always()
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+
+      - name: Install Python requirements
+        working-directory: ${{ github.workspace }}
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install weasyprint; fi
+
+      - name: Download API reports
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          name: api-report
+          path: ./
+
+      - name: Download unit reports
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          name: unit-report
+          path: ./
+
+      - name: Download UI reports
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          name: ui-report
+          path: ./
+
+      - name: Aggregate test results and generate PDF
+        working-directory: ${{ github.workspace }}
+        run: |
+          python scripts/aggregate_results.py --pytest-xml ${GITHUB_WORKSPACE}/pytest-results.xml --out reports/test_report.pdf || true
+
+      - name: Upload test report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: |
+            reports/test_report.pdf
+            reports/test_report.html
