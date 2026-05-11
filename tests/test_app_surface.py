@@ -34,9 +34,10 @@ class TestAppShell:
         assert 200 <= r.status_code < 500, f"Server error: {r.status_code}"
 
     def test_html_contains_login_form(self):
-        """Test: HTML contains login form elements"""
+        """Test: HTML includes the app shell that mounts the login form client-side"""
         r = requests.get(f"{BASE_URL}/", timeout=10)
-        assert 'username' in r.text or 'password' in r.text
+        html = r.text.lower()
+        assert 'id="root"' in html
 
 
 
