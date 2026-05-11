@@ -116,6 +116,9 @@ jobs:
           DURATION=$((END_TIME-START_TIME))
           export CHROME_VER OS_INFO START_TIME END_TIME DURATION
           python scripts/update_env.py
+          # Collect screenshots produced by Selenium (if any) so aggregator can embed them
+          mkdir -p reports/screenshots
+          cp -v target/surefire-reports/screenshots/* reports/screenshots/ || true
       - name: Upload UI test report
         uses: actions/upload-artifact@v4
         with:

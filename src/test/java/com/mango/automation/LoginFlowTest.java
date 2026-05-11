@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -18,6 +19,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 class LoginFlowTest {
     private WebDriver driver;
     private WebDriverWait wait;
+    @RegisterExtension
+    ScreenshotOnFailure screenshotOnFailure = new ScreenshotOnFailure();
 
     @BeforeEach
     void setUp() {
